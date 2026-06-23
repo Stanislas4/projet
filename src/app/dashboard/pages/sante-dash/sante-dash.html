@@ -1,0 +1,53 @@
+<div class="page-container">
+  <div class="data-container">
+    <div class="header-actions">
+      <h2>🏥 Liste des prises en charge Santé</h2>
+      <div class="stats">
+        <span class="stat-badge">
+          📊 Total: {{ santes.length }} signalements
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+
+    <div *ngIf="!isLoading && santes.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucun dossier enregistré</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && santes.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom et Prénoms</th>
+            <th>Âge</th>
+            <th>Sexe</th>
+            <th>Contact</th>
+            <th>Type de violence</th>
+            <th>Date agression</th>
+            <th>Structure responsable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sante of santes">
+            <td class="highlight">{{ sante.nomComplet }}</td>
+            <td>{{ sante.age }} ans</td>
+            <td>{{ sante.sexe === 'M' ? 'Masculin' : 'Féminin' }}</td>
+            <td>{{ sante.contact }}</td>
+            <td>
+              <span class="badge" [class]="getViolenceClass(sante.typeViolence)">
+                {{ sante.typeViolence }}
+              </span>
+            </td>
+            <td>{{ sante.dateAgression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ sante.structureRespo || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

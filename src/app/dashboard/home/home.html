@@ -1,0 +1,111 @@
+<div class="home-container">
+      <!-- En-tête -->
+      <div class="welcome-header">
+        <h1>Bienvenue sur votre Tableau de Bord</h1>
+        <p>Vue d'ensemble des signalements VBG</p>
+      </div>
+
+      <!-- Cartes Statistiques -->
+      <div class="stats-grid">
+        <div class="stat-card police" (click)="navigateTo('police')">
+          <div class="stat-icon">👮</div>
+          <div class="stat-info">
+            <h3>Police</h3>
+            <div class="stat-number">{{ stats.police }}</div>
+            <span class="stat-label">Signalements</span>
+          </div>
+        </div>
+
+        <div class="stat-card justice" (click)="navigateTo('justice')">
+          <div class="stat-icon">⚖️</div>
+          <div class="stat-info">
+            <h3>Justice</h3>
+            <div class="stat-number">{{ stats.justice }}</div>
+            <span class="stat-label">Signalements</span>
+          </div>
+        </div>
+
+        <div class="stat-card osc" (click)="navigateTo('osc')">
+          <div class="stat-icon">🤝</div>
+          <div class="stat-info">
+            <h3>OSC</h3>
+            <div class="stat-number">{{ stats.osc }}</div>
+            <span class="stat-label">Signalements</span>
+          </div>
+        </div>
+
+        <div class="stat-card sante" (click)="navigateTo('sante')">
+          <div class="stat-icon">🏥</div>
+          <div class="stat-info">
+            <h3>Santé</h3>
+            <div class="stat-number">{{ stats.sante }}</div>
+            <span class="stat-label">Dossiers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total général -->
+      <div class="total-card">
+        <div class="total-icon">📊</div>
+        <div class="total-info">
+          <h3>Total Général</h3>
+          <div class="total-number">{{ totalGeneral }}</div>
+          <p>Signalements enregistrés</p>
+        </div>
+      </div>
+
+      <!-- Derniers signalements -->
+      <div class="recent-section">
+        <div class="section-header">
+          <h2>Derniers signalements récents</h2>
+          <button class="view-all" (click)="viewAllRecent()">Voir tout</button>
+        </div>
+
+        <div class="recent-list">
+          <div *ngFor="let item of recentItems" class="recent-item" (click)="navigateTo(item.page)">
+            <div class="recent-icon">{{ item.icon }}</div>
+            <div class="recent-content">
+              <div class="recent-title">{{ item.nom }}</div>
+              <div class="recent-meta">
+                <span class="recent-page">{{ item.page | titlecase }}</span>
+                <span class="recent-date">{{ item.date | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+            </div>
+            <div class="recent-badge" [class]="item.typeClass">
+              {{ item.type }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Répartition par type de violence -->
+      <div class="charts-section">
+        <div class="chart-card">
+          <h3>Répartition par type de violence</h3>
+          <div class="violence-stats">
+            <div *ngFor="let item of violenceDistribution" class="violence-item">
+              <div class="violence-label">{{ item.label }}</div>
+              <div class="violence-bar-container">
+                <div class="violence-bar" [style.width.%]="item.percentage">
+                  <span>{{ item.count }}</span>
+                </div>
+              </div>
+              <div class="violence-percentage">{{ item.percentage }}%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Activité récente</h3>
+          <div class="activity-timeline">
+            <div *ngFor="let activity of activities" class="activity-item">
+              <div class="activity-dot" [class]="activity.type"></div>
+              <div class="activity-content">
+                <div class="activity-text">{{ activity.text }}</div>
+                <div class="activity-time">{{ activity.time | date:'HH:mm' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

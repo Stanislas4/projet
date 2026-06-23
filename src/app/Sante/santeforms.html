@@ -1,0 +1,191 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <h2>🏥 Formulaire VBG - Santé</h2>
+  </div>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a (click)="logout()" class="logout-btn">Déconnexion</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="form-container">
+  <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+
+  <form [formGroup]="santeForm" (ngSubmit)="onSubmit()">
+    <!-- Section 1: Informations personnelles -->
+    <div class="form-section">
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="nomComplet">Nom et Prénoms *</label>
+          <input type="text" id="nomComplet" formControlName="nomComplet" class="form-control"
+                [class.is-invalid]="nomComplet?.invalid && nomComplet?.touched"
+                placeholder="Entrez votre nom complet">
+          <div class="error-message" *ngIf="nomComplet?.invalid && nomComplet?.touched">
+            <span *ngIf="nomComplet?.errors?.['required']">Le nom est requis</span>
+            <span *ngIf="nomComplet?.errors?.['minlength']">Minimum 2 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="contact">Contact *</label>
+          <input type="tel" id="contact" formControlName="contact" class="form-control"
+                 [class.is-invalid]="contact?.invalid && contact?.touched"
+                 placeholder="0143171396">
+          <div class="error-message" *ngIf="contact?.invalid && contact?.touched">
+            <span *ngIf="contact?.errors?.['required']">Le contact est requis</span>
+            <span *ngIf="contact?.errors?.['pattern']">8 à 15 chiffres requis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="age">Âge *</label>
+          <input type="number" id="age" formControlName="age" class="form-control"
+                 [class.is-invalid]="age?.invalid && age?.touched"
+                 placeholder="Âge">
+          <div class="error-message" *ngIf="age?.invalid && age?.touched">
+            <span *ngIf="age?.errors?.['required']">Âge requis</span>
+            <span *ngIf="age?.errors?.['min']">Âge minimum 0</span>
+            <span *ngIf="age?.errors?.['max']">Âge maximum 150</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="sexe">Sexe *</label>
+          <select id="sexe" formControlName="sexe" class="form-control"
+                  [class.is-invalid]="sexe?.invalid && sexe?.touched">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of sexeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cessionnaire">Cessionnaire</label>
+        <select id="cessionnaire" formControlName="cessionnaire" class="form-control">
+          <option value="">-- Sélectionnez --</option>
+          <option *ngFor="let option of cessionnaireOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 2: Détails de l'agression -->
+    <div class="form-section">
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="dateAgression">Date et Heure de l'agression *</label>
+          <input type="datetime-local" id="dateAgression" formControlName="dateAgression" class="form-control"
+                 [class.is-invalid]="dateAgression?.invalid && dateAgression?.touched">
+          <div class="error-message" *ngIf="dateAgression?.invalid && dateAgression?.touched">
+            La date est requise
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="typeViolence">Type de violence *</label>
+          <select id="typeViolence" formControlName="typeViolence" class="form-control"
+                  [class.is-invalid]="typeViolence?.invalid && typeViolence?.touched">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of typeViolenceOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="commentaire">Commentaire</label>
+        <textarea id="commentaire" formControlName="commentaire" class="form-control"
+                  rows="4" placeholder="Décrivez l'incident..."></textarea>
+      </div>
+    </div>
+
+    <!-- Section 3: Évaluation médicale -->
+    <div class="form-section">
+
+      <div class="form-group">
+        <label for="lesionConstates">Lésions constatées</label>
+        <textarea id="lesionConstates" formControlName="lesionConstates" class="form-control"
+                  rows="3" placeholder="Décrivez les blessures..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="examenFait">Examens réalisés</label>
+        <textarea id="examenFait" formControlName="examenFait" class="form-control"
+                  rows="2" placeholder="Examens effectués..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="medicamentDonnes">Médicaments prescrits</label>
+        <textarea id="medicamentDonnes" formControlName="medicamentDonnes" class="form-control"
+                  rows="2" placeholder="Médicaments donnés..."></textarea>
+      </div>
+    </div>
+
+    <!-- Section 4: Prise en charge -->
+    <div class="form-section">
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="structureRespo">Structure responsable</label>
+          <select id="structureRespo" formControlName="structureRespo" class="form-control">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of structureRespoOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="pepVih">PEP VIH</label>
+          <select id="pepVih" formControlName="pepVih" class="form-control">
+            <option value="">-- Sélectionnez --</option>
+            <option *ngFor="let option of pepVihOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="hospitalisation">Hospitalisation</label>
+          <select id="hospitalisation" formControlName="hospitalisation" class="form-control">
+            <option value="">-- Sélectionnez --</option>
+            <option *ngFor="let option of hospitalisationOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="etapeDossier">État du dossier</label>
+          <input type="text" id="etapeDossier" formControlName="etapeDossier" class="form-control"
+                 placeholder="État du dossier">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="pieceJointe">Pièce jointe (PDF, JPG, PNG)</label>
+        <input type="file" id="pieceJointe" (change)="onFileSelected($event)"
+               accept=".jpg,.jpeg,.png,.pdf" class="form-control">
+        <div *ngIf="selectedFile" class="file-info">
+          📎 {{ selectedFile.name }}
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="isLoading || santeForm.invalid">
+      {{ isLoading ? '⏳ Envoi en cours...' : ' Enregistrer' }}
+    </button>
+  </form>
+</div>

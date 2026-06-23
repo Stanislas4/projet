@@ -1,0 +1,62 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Tableau de Bord</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button
+        (click)="navigateTo('home')"
+        [class.active]="isActive('home')"
+        class="nav-btn">
+        <span class="icon">🏠</span>
+        <span>Accueil</span>
+      </button>
+
+      <button
+        (click)="navigateTo('police')"
+        [class.active]="isActive('police')"
+        class="nav-btn">
+        <span class="icon">👮</span>
+        <span>Police</span>
+      </button>
+
+      <button
+        (click)="navigateTo('justice')"
+        [class.active]="isActive('justice')"
+        class="nav-btn">
+        <span class="icon">⚖️</span>
+        <span>Justice</span>
+      </button>
+
+      <button
+        (click)="navigateTo('osc')"
+        [class.active]="isActive('osc')"
+        class="nav-btn">
+        <span class="icon">🤝</span>
+        <span>OSC</span>
+      </button>
+
+      <button
+        (click)="navigateTo('sante')"
+        [class.active]="isActive('sante')"
+        class="nav-btn">
+        <span class="icon">🏥</span>
+        <span>Santé</span>
+      </button>
+    </nav>
+
+    <button (click)="logout()" class="logout-btn">
+      <span class="icon">🚪</span>
+      <span>Déconnexion</span>
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

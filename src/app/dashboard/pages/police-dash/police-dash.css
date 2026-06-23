@@ -1,0 +1,177 @@
+.data-container {
+  background: white;
+  border-left: 4px solid #1e3a8a;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid whitesmoke;
+}
+
+.header-actions h2 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+}
+
+.stat-badge {
+  background: linear-gradient(145deg, #1e3a8a 25%, #0f172a 75%);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table td {
+  color: #666;
+  font-size: 14px;
+}
+
+.data-table tr:hover {
+  background: #f8f9fa;
+}
+
+.data-table tr:hover td {
+  color: #333;
+}
+
+.highlight {
+  font-weight: 600;
+  color: #667eea !important;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.badge-violence {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-sexual {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-physical {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-psychological {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-marriage {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-economic {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-mutilation {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-violence-exploitation {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.empty-state p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+.empty-state small {
+  color: #999;
+  font-size: 12px;
+}

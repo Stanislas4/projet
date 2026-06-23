@@ -1,0 +1,54 @@
+<div class="page-container">
+  <div class="data-container">
+    <div class="header-actions">
+      <h2>⚖️ Liste des signalements Justice</h2>
+      <div class="stats">
+        <span class="stat-badge">
+          📊 Total: {{ signalements.length }} signalements
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+
+    <div *ngIf="!isLoading && signalements.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucun signalement enregistré</p>
+      <small>Les signalements apparaîtront ici après validation</small>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && signalements.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom et Prénoms</th>
+            <th>Genre</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Type de violence</th>
+            <th>Numéro CNI</th>
+            <th>Rôle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let signalement of signalements">
+            <td class="highlight">{{ signalement.nomComplet }}</td>
+            <td>{{ signalement.genre === 'masculin' ? '👨 Masculin' : '👩 Féminin' }}</td>
+            <td>{{ signalement.email }}</td>
+            <td>{{ signalement.contact }}</td>
+            <td>
+              <span class="badge" [class]="getViolenceClass(signalement.typeViolence)">
+                {{ signalement.typeViolence }}
+              </span>
+            </td>
+            <td>{{ signalement.numeroCarteIdentite }}</td>
+            <td>{{ signalement.roleAffaire || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

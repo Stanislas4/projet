@@ -1,0 +1,85 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <h2>🌍 Formulaire VBG - OSC</h2>
+  </div>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a (click)="logout()" class="logout-btn">Déconnexion</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="form-container">
+  <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+
+  <form [formGroup]="oscForm" (ngSubmit)="onSubmit()">
+    <div class="form-section">
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="nomComplet">Nom et Prénoms *</label>
+          <input type="text" id="nomComplet" formControlName="nomComplet" class="form-control"
+                [class.is-invalid]="nomComplet?.invalid && nomComplet?.touched"
+                placeholder="Entrez votre nom complet">
+          <div class="error-message" *ngIf="nomComplet?.invalid && nomComplet?.touched">
+            <span *ngIf="nomComplet?.errors?.['required']">Le nom est requis</span>
+            <span *ngIf="nomComplet?.errors?.['minlength']">Minimum 2 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="typeViolence">Type de violence *</label>
+          <select id="typeViolence" formControlName="typeViolence" class="form-control"
+                  [class.is-invalid]="typeViolence?.invalid && typeViolence?.touched">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of typeViolenceOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="organisationRespo">Organisation responsable</label>
+          <select id="organisationRespo" formControlName="organisationRespo" class="form-control">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of organRespoOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="etapeParcours">Étape du parcours</label>
+          <select id="etapeParcours" formControlName="etapeParcours" class="form-control">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of etapeParcoursOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="dossierAdministratif">Dossier administratif</label>
+        <input type="file" id="dossierAdministratif" (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,.jpg,.png" class="form-control">
+        <div *ngIf="selectedFile" class="file-info">
+          📎 {{ selectedFile.name }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="commentaire">Commentaire</label>
+        <textarea id="commentaire" formControlName="commentaire" class="form-control"
+                  rows="4" placeholder="Décrivez la situation..."></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="isLoading || oscForm.invalid">
+      {{ isLoading ? '⏳ Envoi en cours...' : '✅ Enregistrer' }}
+    </button>
+  </form>
+</div>

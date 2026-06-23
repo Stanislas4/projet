@@ -1,0 +1,56 @@
+<div class="page-container">
+  <div class="data-container">
+    <div class="header-actions">
+      <h2>👮 Liste des signalements Police</h2>
+      <div class="stats">
+        <span class="stat-badge">
+          📊 Total: {{ polices.length }} signalements
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+
+    <div *ngIf="!isLoading && polices.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucun signalement enregistré</p>
+      <small>Les signalements apparaîtront ici après validation</small>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && polices.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nom et Prénoms</th>
+            <th>Contact</th>
+            <th>Domicile</th>
+            <th>Type de violence</th>
+            <th>Date procédure</th>
+            <th>Statut judiciaire</th>
+            <th>Agent récepteur</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let police of polices; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td class="highlight">{{ police.nomComplet }}</td>
+            <td>{{ police.contact }}</td>
+            <td>{{ police.domicile }}</td>
+            <td>
+              <span class="badge" [class]="getViolenceClass(police.typeViolence)">
+                {{ police.typeViolence }}
+              </span>
+            </td>
+            <td>{{ police.dateDebutProcedure | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ police.statutJudiciaire || '-' }}</td>
+            <td>{{ police.agentRecepteur }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

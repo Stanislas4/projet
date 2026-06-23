@@ -1,0 +1,49 @@
+<div class="page-container">
+  <div class="data-container">
+    <div class="header-actions">
+      <h2>🌍 Liste des signalements OSC</h2>
+      <div class="stats">
+        <span class="stat-badge">
+          📊 Total: {{ ongs.length }} signalements
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+
+    <div *ngIf="!isLoading && ongs.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucun signalement enregistré</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && ongs.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom et Prénoms</th>
+            <th>Type de violence</th>
+            <th>Organisation responsable</th>
+            <th>Étape du parcours</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ong of ongs">
+            <td class="highlight">{{ ong.nomComplet }}</td>
+            <td>
+              <span class="badge" [class]="getViolenceClass(ong.typeViolence)">
+                {{ ong.typeViolence }}
+              </span>
+            </td>
+            <td>{{ ong.organisationRespo || '-' }}</td>
+            <td>{{ ong.etapeParcours || '-' }}</td>
+            <td class="comment-cell">{{ (ong.commentaire | slice:0:50) + (ong.commentaire) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

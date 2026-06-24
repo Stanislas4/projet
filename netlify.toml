@@ -1,6 +1,6 @@
 [build]
 command = "npm run build"
-publish = "dist/vbg-app"
+publish = "dist/projet/browser"
 
 [build.environment]
 NODE_VERSION = "22"
@@ -17,4 +17,3 @@ for = "/*"
 X-Frame-Options = "DENY"
 X-XSS-Protection = "1; mode=block"
 X-Content-Type-Options = "nosniff"
-

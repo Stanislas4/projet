@@ -1,6 +1,6 @@
 [build]
 command = "npm run build"
-publish = "dist/projet"
+publish = "dist/vbg-app"
 
 [build.environment]
 NODE_VERSION = "22"

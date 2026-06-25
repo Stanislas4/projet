@@ -1,35 +1,32 @@
 import { Routes } from '@angular/router';
-import { JusticeForm } from './Justice/justiceforms';
-import { OSCForm } from './OSC/oscforms';
-import { PoliceForm } from './Police/policeforms';
-import { SanteForm } from './Sante/santeforms';
-import { Dashboard } from './dashboard/dashboard';
-import { JusticeDash } from './dashboard/pages/justice-dash/justice-dash';
-import { OscDash } from './dashboard/pages/oscdash/oscdash';
-import { SanteDash } from './dashboard/pages/sante-dash/sante-dash';
-import { PoliceDash } from './dashboard/pages/police-dash/police-dash';
-import { Home } from './dashboard/home/home';
+import { JusticeDash } from './pages/justice-dash/justice-dash';
+import { OscDash } from './pages/oscdash/oscdash';
+import { SanteDash } from './pages/sante-dash/sante-dash';
+import { PoliceDash } from './pages/police-dash/police-dash';
+import { HomeComponent } from './pages/home/home.component';
+import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
+import { PoliceFormsComponent } from './pages/police-forms/police-forms.component';
+import { SanteFormsComponent } from './pages/sante-forms/sante-forms.component';
+import { JusticeFormsComponent } from './pages/justice-forms/justice-forms.component';
+import { OscFormsComponent } from './pages/osc-forms/osc-forms.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'justice', component: JusticeForm},
-  { path: 'osc', component: OSCForm },
-  { path: 'police', component: PoliceForm },
-  { path: 'sante', component: SanteForm },
+  { path: 'justiceform', component: JusticeFormsComponent },
+  { path: 'oscform', component: OscFormsComponent },
+  { path: 'policeform', component: PoliceFormsComponent },
+  { path: 'santeform', component: SanteFormsComponent },
   {
     path: 'dashboard',
-    component: Dashboard,
+    component: DashboardLayoutComponent,
     children: [
-      { path: '', component: Home },  // Page d'accueil
-      { path: 'home', component: Home },
+      { path: '', component: HomeComponent },  // Page d'accueil
       { path: 'police', component: PoliceDash },
       { path: 'justice', component: JusticeDash },
       { path: 'osc', component: OscDash },
       { path: 'sante', component: SanteDash },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
-  {path: 'dashboard', component: Dashboard},
   //{ path: 'login', loadComponent: () => import('./auth/login.component').then(m => m.LoginComponent) },
-  { path: '**', redirectTo: '/dashboard' }
 ];

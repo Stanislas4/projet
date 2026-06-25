@@ -1,0 +1,98 @@
+/* ==========================================
+   THEME OSC - ORANGE
+   ========================================== */
+
+.navbar {
+  background: #1c1917;
+  border-bottom: 3px solid #ea580c;
+}
+
+.nav-brand h2 {
+  color: #ea580c;
+}
+
+.form-section {
+  border: 1px solid #ea580c;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-section::before {
+  content: " DÉCLARATION VBG - OSC";
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  border-radius: 8px;
+  letter-spacing: 1px;
+  text-align: center;
+  border-left: 4px solid #ea580c;
+  border-right: 4px solid #ea580c;
+}
+
+.form-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, transparent 50%, #ffedd5 50%);
+  border-radius: 0 0 0 80px;
+  opacity: 0.5;
+}
+
+label .required {
+  color: #ea580c;
+}
+
+.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234,88,12,0.1);
+}
+
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ea580c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+input[type="file"].form-control:hover {
+  border-color: #ea580c;
+  background: #ffedd5;
+}
+
+.file-info {
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  color: #9a3412;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+}
+
+.btn-submit:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(234,88,12,0.5);
+  background: linear-gradient(135deg, #c2410c, #9a3412);
+}
+
+.stat-badge {
+  background: linear-gradient(145deg, #ea580c 25%, #1c1917 95%);
+}
+
+.data-container {
+  border-left: 4px solid #ea580c;
+}
+
+.highlight {
+  color: #c2410c !important;
+}
+
+.badge-violence {
+  background: #fce7f3;
+  color: #ea580c;
+}

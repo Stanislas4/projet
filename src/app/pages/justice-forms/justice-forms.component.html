@@ -1,0 +1,156 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <h2> Formulaire VBG - Justice</h2>
+  </div>
+  <ul class="nav-menu">
+    <li class="nav-item">
+      <a (click)="logout()" class="logout-btn">Déconnexion</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="form-container">
+  <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+  <form [formGroup]="justiceForm" (ngSubmit)="onSubmit()">
+    <!-- Section 1: Informations personnelles -->
+    <div class="form-section">
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="nomComplet">Nom et Prénoms *</label>
+          <input type="text" id="nomComplet" formControlName="nomComplet" class="form-control"
+            [class.is-invalid]="nomComplet?.invalid && nomComplet?.touched" placeholder="Entrez votre nom complet">
+          <div class="error-message" *ngIf="nomComplet?.invalid && nomComplet?.touched">
+            <span *ngIf="nomComplet?.errors?.['required']">Le nom est requis</span>
+            <span *ngIf="nomComplet?.errors?.['minlength']">Minimum 3 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="contact">Téléphone *</label>
+          <input type="tel" id="contact" formControlName="contact" class="form-control"
+            [class.is-invalid]="contact?.invalid && contact?.touched" placeholder="0123456789">
+          <div class="error-message" *ngIf="contact?.invalid && contact?.touched">
+            <span *ngIf="contact?.errors?.['required']">Le téléphone est requis</span>
+            <span *ngIf="contact?.errors?.['pattern']">10 chiffres requis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="email">Email *</label>
+          <input type="email" id="email" formControlName="email" class="form-control"
+            [class.is-invalid]="email?.invalid && email?.touched" placeholder="exemple@email.com">
+          <div class="error-message" *ngIf="email?.invalid && email?.touched">
+            <span *ngIf="email?.errors?.['email']">Email invalide</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="numeroCarteIdentite">Numéro CNI *</label>
+          <input type="text" id="numeroCarteIdentite" formControlName="numeroCarteIdentite" class="form-control"
+            [class.is-invalid]="numeroCarteIdentite?.invalid && numeroCarteIdentite?.touched"
+            placeholder="CNI1234567890">
+          <small class="hint">Format: CNI + 10 chiffres</small>
+          <div class="error-message" *ngIf="numeroCarteIdentite?.invalid && numeroCarteIdentite?.touched">
+            <span *ngIf="numeroCarteIdentite?.errors?.['required']">Le CNI est requis</span>
+            <span *ngIf="numeroCarteIdentite?.errors?.['pattern']">Format: CNI + 10 chiffres</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label>Genre *</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="genre" value="masculin">
+              Masculin
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="genre" value="feminin">
+              Féminin
+            </label>
+          </div>
+          <div class="error-message" *ngIf="justiceForm.get('genre')?.invalid && justiceForm.get('genre')?.touched">
+            Le genre est requis
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="photoCarte">Photo CNI (optionnel)</label>
+          <input type="file" id="photoCarte" (change)="onCartePhotoSelected($event)" accept="image/*"
+            class="form-control">
+          <div *ngIf="cartePhotoPreview" class="preview-image">
+            <img [src]="cartePhotoPreview" alt="Aperçu CNI">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="photo">Photo (optionnel)</label>
+        <input type="file" id="photo" (change)="onPhotoSelected($event)" accept="image/*" class="form-control">
+        <div *ngIf="photoPreview" class="preview-image">
+          <img [src]="photoPreview" alt="Aperçu photo">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Détails de l'affaire -->
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="typeViolence">Type de violence *</label>
+          <select id="typeViolence" formControlName="typeViolence" class="form-control"
+            [class.is-invalid]="justiceForm.get('typeViolence')?.invalid && justiceForm.get('typeViolence')?.touched">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of typeViolenceOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="roleAffaire">Rôle dans l'affaire</label>
+          <select id="roleAffaire" formControlName="roleAffaire" class="form-control">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of roleAffaireOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="procedures">Procédures</label>
+          <select id="procedures" formControlName="procedures" class="form-control">
+            <option value="">Sélectionnez</option>
+            <option *ngFor="let option of proceduresOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="affaireEnCause">Affaire en cause</label>
+          <input type="text" id="affaireEnCause" formControlName="affaireEnCause" class="form-control"
+            placeholder="Décrivez l'affaire">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="commentaire">Commentaire</label>
+        <textarea id="commentaire" formControlName="commentaire" class="form-control" rows="4"
+          placeholder="Informations complémentaires..."></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="isLoading || justiceForm.invalid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      {{ isLoading ? '⏳ Envoi en cours...' : 'Enregistrer' }}
+    </button>
+  </form>
+</div>

@@ -1,0 +1,160 @@
+/* ==========================================
+   DASHBOARD LAYOUT
+   ========================================== */
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f5f5;
+  width: 100%;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  position: fixed;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 30px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sidebar-header p {
+  margin: 5px 0 0;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-btn {
+  width: 100%;
+  padding: 15px 25px;
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  font-weight: 500;
+}
+
+.nav-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.nav-btn.active {
+  background: rgba(255,255,255,0.2);
+  border-left: 4px solid white;
+}
+
+.nav-btn .icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.sidebar-logout {
+  margin: 20px;
+  padding: 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-logout:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: calc(100% - 280px);
+}
+
+.content-body {
+  padding: 30px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar-header h2,
+  .sidebar-header p {
+    display: none;
+  }
+
+  .nav-btn {
+    justify-content: center;
+    padding: 15px;
+  }
+
+  .nav-btn span:last-child {
+    display: none;
+  }
+
+  .nav-btn .icon {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  .sidebar-logout span:last-child {
+    display: none;
+  }
+
+  .sidebar-logout {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .main-content {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+
+  .content-body {
+    padding: 15px;
+  }
+}

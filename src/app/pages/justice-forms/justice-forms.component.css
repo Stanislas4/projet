@@ -1,0 +1,98 @@
+/* ==========================================
+   THEME JUSTICE - JAUNE
+   ========================================== */
+
+.navbar {
+  background: #111827;
+  border-bottom: 3px solid #f59e0b;
+}
+
+.nav-brand h2 {
+  color: #f59e0b;
+}
+
+.form-section {
+  border-top: 4px solid #f59e0b;
+  transition: transform 0.2s ease;
+}
+
+.form-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.form-section::before {
+  content: "INFORMATIONS PERSONNELLES";
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  border-left: 4px solid #f59e0b;
+}
+
+.form-section:nth-child(2)::before {
+  content: " DÉTAILS DE L'AFFAIRE";
+}
+
+.form-section .section-title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  border-left: 4px solid #f59e0b;
+}
+
+label .required {
+  color: #f59e0b;
+}
+
+.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23f59e0b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+input[type="radio"] {
+  accent-color: #f59e0b;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.btn-submit:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.stat-badge {
+  background: linear-gradient(145deg, #f59e0b 25%, #0f172a 75%);
+}
+
+.data-container {
+  border-left: 4px solid #f59e0b;
+}
+
+.highlight {
+  color: #d97706 !important;
+}
+
+.badge-violence {
+  background: #fef3c7;
+  color: #f59e0b;
+}

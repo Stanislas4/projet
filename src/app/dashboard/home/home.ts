@@ -6,9 +6,10 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [DatePipe, FormsModule, CommonModule],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrls: ['./home.css'],
 })
 export class Home implements OnInit{
 private storage = inject(StorageService);

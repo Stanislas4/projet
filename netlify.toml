@@ -1,6 +1,6 @@
 [build]
 command = "npm run build"
-publish = "dist/projet/browser"
+publish = "dist/vbg-app/browser"
 
 [build.environment]
 NODE_VERSION = "20"

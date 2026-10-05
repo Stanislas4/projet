@@ -69,3 +69,16 @@ export interface Sante {
   updatedAt?: string;
   source?: 'sante';
 }
+
+
+export interface User {
+  id: string;
+  email: string;
+  password: string;
+  nomComplet: string;
+  role: 'admin' | 'entity'; // admin = dashboard, entity = formulaire
+  entity?: 'justice' | 'osc' | 'police' | 'sante'; // Pour les utilisateurs entity
+  createdAt: string;
+  lastLogin?: string;
+}
+

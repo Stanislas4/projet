@@ -1,142 +1,74 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';import { Justice, OSC, Police, Sante } from '../models/Interface';
-;
+import { BehaviorSubject } from 'rxjs';
+import { supabase } from '../supabase.client';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class StorageService {
-  private readonly STORAGE_KEY = 'vbg_forms_data';
   private dataSubject = new BehaviorSubject<any[]>([]);
 
   constructor() {
     this.loadData();
   }
 
-  private loadData(): void {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        this.dataSubject.next(JSON.parse(stored));
-      } else {
-        this.dataSubject.next([]);
-      }
-    } catch (e) {
-      console.error('Erreur chargement:', e);
-      this.dataSubject.next([]);
-    }
+  private async loadData() {
+    const { data, error } = await supabase
+      .from('vbg_dossiers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    // On remet le format que tes dashboards attendent déjà
+    const mapped = (data || []).map((row: any) => ({
+      ...row.data, // tout ton formulaire
+      id: row.id,
+      source: row.source,
+      type_violence: row.type_violence,
+      createdAt: row.created_at
+    }));
+    this.dataSubject.next(mapped);
   }
 
-  private saveData(data: any[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-    this.dataSubject.next(data);
-  }
-  getData(): Observable<any[]> {
-    return this.dataSubject.asObservable();
-  }
-  getDataSnapshot(): any[] {
-    return this.dataSubject.value;
+  // Ce que tes dashboards utilisent déjà
+  getData() { return this.dataSubject.asObservable(); }
+  getDataSnapshot() { return this.dataSubject.value; }
+  getByType(type: string) { return this.dataSubject.value.filter(i => i.source === type); }
+
+  getPolice() { return this.getByType('police'); }
+  getSante() { return this.getByType('sante'); }
+  getJustice() { return this.getByType('justice'); }
+  getOSC() { return this.getByType('osc'); }
+
+  getStats() {
+    const data = this.dataSubject.value;
+    const byType = data.reduce((acc: any, item: any) => {
+      acc[item.source] = (acc[item.source] || 0) + 1;
+      return acc;
+    }, {});
+    return { total: data.length, byType };
   }
 
-  getByType(type: string): any[] {
-    return this.dataSubject.value.filter(item => item.source === type);
-  }
+  async create(formData: any) {
+    const { data, error } = await supabase
+      .from('vbg_dossiers')
+      .insert([{
+        source: formData.source, // police, sante, justice, osc
+        type_violence: formData.type_violence || formData.type || null,
+        data: formData // tout le formulaire en jsonb
+      }])
+      .select()
+      .single();
 
-  getJustice(): Justice[] {
-    return this.getByType('justice') as Justice[];
-  }
+    if (error) throw error;
 
-  getOSC(): OSC[] {
-    return this.getByType('osc') as OSC[];
-  }
-
-  getPolice(): Police[] {
-    return this.getByType('police') as Police[];
-  }
-
-  getSante(): Sante[] {
-    return this.getByType('sante') as Sante[];
-  }
-
-  create(data: any): any {
-    const all = this.dataSubject.value;
-    const newItem = {
-      ...data,
-      id: this.generateId(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    all.push(newItem);
-    this.saveData(all);
+    const newItem = { ...formData, id: data.id, createdAt: data.created_at };
+    this.dataSubject.next([newItem, ...this.dataSubject.value]);
     return newItem;
   }
 
-  update(id: string, updates: any): any | null {
-    const all = this.dataSubject.value;
-    const index = all.findIndex(item => item.id === id);
-    if (index === -1) return null;
-
-    all[index] = {
-      ...all[index],
-      ...updates,
-      updatedAt: new Date().toISOString()
-    };
-    this.saveData(all);
-    return all[index];
-  }
-
-  delete(id: string): boolean {
-    const all = this.dataSubject.value;
-    const filtered = all.filter(item => item.id !== id);
-    if (filtered.length === all.length) return false;
-    this.saveData(filtered);
-    return true;
-  }
-
-  deleteAll(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
-    this.dataSubject.next([]);
-  }
-
-  getStats(): any {
-    const data = this.dataSubject.value;
-    const byType = data.reduce((acc, item) => {
-      acc[item.source] = (acc[item.source] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const byViolence = data.reduce((acc, item) => {
-      acc[item.typeViolence] = (acc[item.typeViolence] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return {
-      total: data.length,
-      byType,
-      byViolence
-    };
-  }
-
-  exportData(): string {
-    const data = this.dataSubject.value;
-    return JSON.stringify(data, null, 2);
-  }
-
-  importData(jsonData: string): boolean {
-    try {
-      const data = JSON.parse(jsonData);
-      if (Array.isArray(data)) {
-        this.saveData(data);
-        return true;
-      }
-      return false;
-    } catch (e) {
-      console.error('Erreur d\'import:', e);
-      return false;
-    }
-  }
-
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  async delete(id: string) {
+    await supabase.from('vbg_dossiers').delete().eq('id', id);
+    this.dataSubject.next(this.dataSubject.value.filter(i => i.id !== id));
   }
 }
+

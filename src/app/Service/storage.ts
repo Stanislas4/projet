@@ -1,38 +1,44 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { supabase } from '../supabase.client';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
+  private readonly STORAGE_KEY = 'vbg_dossiers_local';
   private dataSubject = new BehaviorSubject<any[]>([]);
 
   constructor() {
     this.loadData();
   }
 
-  private async loadData() {
-    const { data, error } = await supabase
-      .from('vbg_dossiers')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) { console.error(error); return; }
-
-    // On remet le format que tes dashboards attendent déjà
-    const mapped = (data || []).map((row: any) => ({
-      ...row.data, // tout ton formulaire
-      id: row.id,
-      source: row.source,
-      type_violence: row.type_violence,
-      createdAt: row.created_at
-    }));
-    this.dataSubject.next(mapped);
+  private loadData() {
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      this.dataSubject.next(raw ? JSON.parse(raw) : []);
+    } catch {
+      this.dataSubject.next([]);
+    }
   }
 
-  // Ce que tes dashboards utilisent déjà
-  getData() { return this.dataSubject.asObservable(); }
-  getDataSnapshot() { return this.dataSubject.value; }
-  getByType(type: string) { return this.dataSubject.value.filter(i => i.source === type); }
+  private saveToLocal(data: any[]) {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error('Stockage local plein ou indisponible', e);
+    }
+    this.dataSubject.next(data);
+  }
+
+  getData(): Observable<any[]> {
+    return this.dataSubject.asObservable();
+  }
+
+  getDataSnapshot() {
+    return this.dataSubject.value;
+  }
+
+  getByType(type: string) {
+    return this.dataSubject.value.filter(i => i.source === type);
+  }
 
   getPolice() { return this.getByType('police'); }
   getSante() { return this.getByType('sante'); }
@@ -49,26 +55,30 @@ export class StorageService {
   }
 
   async create(formData: any) {
-    const { data, error } = await supabase
-      .from('vbg_dossiers')
-      .insert([{
-        source: formData.source, // police, sante, justice, osc
-        type_violence: formData.type_violence || formData.type || null,
-        data: formData // tout le formulaire en jsonb
-      }])
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    const newItem = { ...formData, id: data.id, createdAt: data.created_at };
-    this.dataSubject.next([newItem, ...this.dataSubject.value]);
+    const newItem = {
+      ...formData,
+      id: 'VBG-' + Date.now(),
+      createdAt: new Date().toISOString(),
+      type_violence: formData.typeViolence || formData.type_violence,
+      source: formData.source
+    };
+    this.saveToLocal([newItem, ...this.dataSubject.value]);
     return newItem;
   }
 
+  async update(id: string, changes: any) {
+    const updated = this.dataSubject.value.map(i =>
+      i.id === id ? { ...i, ...changes } : i
+    );
+    this.saveToLocal(updated);
+  }
+
   async delete(id: string) {
-    await supabase.from('vbg_dossiers').delete().eq('id', id);
-    this.dataSubject.next(this.dataSubject.value.filter(i => i.id !== id));
+    this.saveToLocal(this.dataSubject.value.filter(i => i.id !== id));
+  }
+
+  clearAll() {
+    localStorage.removeItem(this.STORAGE_KEY);
+    this.dataSubject.next([]);
   }
 }
-

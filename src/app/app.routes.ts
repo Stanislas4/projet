@@ -9,34 +9,29 @@ import { PoliceFormsComponent } from './pages/police-forms/police-forms.componen
 import { SanteFormsComponent } from './pages/sante-forms/sante-forms.component';
 import { JusticeFormsComponent } from './pages/justice-forms/justice-forms.component';
 import { OscFormsComponent } from './pages/osc-forms/osc-forms.component';
-import { roleGuard } from './guards/role.guard';
-import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 
-  // LOGIN - les 5 codes
-  { path: 'login', component: LoginComponent },
+  // Formulaires
+  { path: 'policeform', component: PoliceFormsComponent },
+  { path: 'santeform', component: SanteFormsComponent },
+  { path: 'justiceform', component: JusticeFormsComponent },
+  { path: 'oscform', component: OscFormsComponent },
 
-  // FORMULAIRES - maintenant protégés par entité
-  { path: 'policeform', component: PoliceFormsComponent, canActivate: [roleGuard], data: { role: 'POLICE' } },
-  { path: 'santeform', component: SanteFormsComponent, canActivate: [roleGuard], data: { role: 'SANTE' } },
-  { path: 'justiceform', component: JusticeFormsComponent, canActivate: [roleGuard], data: { role: 'JUSTICE' } },
-  { path: 'oscform', component: OscFormsComponent, canActivate: [roleGuard], data: { role: 'OSC' } },
-
-  // DASHBOARDS - 5 liens séparés
+  // Dashboards
   {
     path: 'dashboard',
     component: DashboardLayoutComponent,
-    canActivate: [roleGuard],
-    data: { role: 'ADMIN' }, // sera autorisé pour tous les rôles dans le guard
     children: [
       { path: '', component: HomeComponent },
-      { path: 'police', component: PoliceDash, canActivate: [roleGuard], data: { role: 'POLICE' } },
-      { path: 'justice', component: JusticeDash, canActivate: [roleGuard], data: { role: 'JUSTICE' } },
-      { path: 'osc', component: OscDash, canActivate: [roleGuard], data: { role: 'OSC' } },
-      { path: 'sante', component: SanteDash, canActivate: [roleGuard], data: { role: 'SANTE' } },
-      { path: 'admin', component: HomeComponent, canActivate: [roleGuard], data: { role: 'ADMIN' } },
+      { path: 'police', component: PoliceDash },
+      { path: 'justice', component: JusticeDash },
+      { path: 'osc', component: OscDash },
+      { path: 'sante', component: SanteDash },
+      { path: 'admin', component: HomeComponent },
     ]
-  }
+  },
+
+  { path: '**', redirectTo: '/dashboard' }
 ];

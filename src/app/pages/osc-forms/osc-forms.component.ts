@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '@/app/Services/auth.service';
 
 @Component({
   selector: 'app-osc-forms',
@@ -48,10 +49,11 @@ export class OscFormsComponent {
   ];
 
   constructor(
-    private fb: FormBuilder,
-    private storage: StorageService,
-    private router: Router
-  ) { }
+  private fb: FormBuilder,
+  private storage: StorageService,
+  private router: Router,
+  private auth: AuthService
+) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -85,43 +87,48 @@ export class OscFormsComponent {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.oscForm.invalid) {
-      this.oscForm.markAllAsTouched();
-      this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    try {
-      const formValue = this.oscForm.value;
-
-      let dossierBase64 = null;
-      if (this.selectedFile) {
-        dossierBase64 = await this.fileToBase64(this.selectedFile);
-      }
-
-      const oscData = {
-        ...formValue,
-        source: 'osc',
-        dossierAdministratif: dossierBase64
-      };
-
-      this.storage.create(oscData);
-
-      this.isLoading = false;
-      this.successMessage = 'Formulaire enregistré avec succès !';
-      this.resetForm();
-
-      setTimeout(() => this.successMessage = '', 5000);
-    } catch (error) {
-      this.isLoading = false;
-      this.errorMessage = 'Erreur lors de l\'enregistrement';
-      setTimeout(() => this.errorMessage = '', 5000);
-    }
+  if (this.oscForm.invalid) {
+    this.oscForm.markAllAsTouched();
+    this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
+    return;
   }
+
+  this.isLoading = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  try {
+    const formValue = this.oscForm.value;
+
+    let dossierBase64 = null;
+    if (this.selectedFile) {
+      dossierBase64 = await this.fileToBase64(this.selectedFile);
+    }
+
+    const { nomComplet, commentaire, dossierAdministratif, ...reste } = formValue;
+
+    await this.storage.create(
+      'osc',
+      reste, // typeViolence, etapeParcours, organisationRespo
+      {
+        nom: nomComplet,
+        commentaire,
+        dossierAdministratif: dossierBase64
+      }
+    );
+
+    this.isLoading = false;
+    this.successMessage = 'Formulaire enregistré avec succès !';
+    this.resetForm();
+
+    setTimeout(() => this.successMessage = '', 5000);
+  } catch (error) {
+    console.error(error);
+    this.isLoading = false;
+    this.errorMessage = 'Erreur lors de l\'enregistrement';
+    setTimeout(() => this.errorMessage = '', 5000);
+  }
+}
 
   resetForm(): void {
     this.oscForm.reset();
@@ -139,9 +146,10 @@ export class OscFormsComponent {
     return this.router.url === route;
   }
 
-  logout(): void {
-    this.router.navigate(['/login']);
-  }
+  async logout(): Promise<void> {
+  await this.auth.logout();
+  this.router.navigate(['/login']);
+}
 
   // Getters
   get nomComplet() { return this.oscForm.get('nomComplet'); }

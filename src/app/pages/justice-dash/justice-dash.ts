@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Justice } from '../../models/Interface';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 
 @Component({
   selector: 'app-justice-page',

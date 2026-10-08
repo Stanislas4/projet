@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '@/app/Services/auth.service';
 
 @Component({
   selector: 'app-justice-forms',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './justice-forms.component.html',
-  styleUrl: './justice-forms.component.css'
+  styleUrl: './justice-forms.component.css',
 })
 export class JusticeFormsComponent {
   justiceForm!: FormGroup;
@@ -28,7 +29,7 @@ export class JusticeFormsComponent {
     { value: 'Sexuelle', label: 'Violence Sexuelle' },
     { value: 'Economique', label: 'Violence Économique' },
     { value: 'Exploitation', label: 'Exploitation Sexuelle' },
-    { value: 'Mutilation', label: 'Mutilation' }
+    { value: 'Mutilation', label: 'Mutilation' },
   ];
 
   roleAffaireOptions = [
@@ -39,7 +40,7 @@ export class JusticeFormsComponent {
     { value: 'Prevenu', label: 'Prévenu' },
     { value: 'Condamne', label: 'Condamné' },
     { value: 'Representant legal', label: 'Représentant légal' },
-    { value: 'Autre', label: 'Autre' }
+    { value: 'Autre', label: 'Autre' },
   ];
 
   proceduresOptions = [
@@ -51,14 +52,15 @@ export class JusticeFormsComponent {
     { value: 'Appel en cours', label: 'Appel en cours' },
     { value: 'Classement sans suite', label: 'Classement sans suite' },
     { value: 'Mediation', label: 'Médiation' },
-    { value: 'Autre', label: 'Autre' }
+    { value: 'Autre', label: 'Autre' },
   ];
 
   constructor(
     private fb: FormBuilder,
     private storage: StorageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private auth: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -75,7 +77,7 @@ export class JusticeFormsComponent {
       affaireEnCause: [''],
       procedures: [''],
       numeroCarteIdentite: ['', [Validators.required, Validators.pattern(/^CNI[0-9]{10}$/)]],
-      commentaire: ['']
+      commentaire: [''],
     });
   }
 
@@ -84,7 +86,7 @@ export class JusticeFormsComponent {
     if (file) {
       this.selectedPhoto = file;
       const reader = new FileReader();
-      reader.onload = () => this.photoPreview = reader.result as string;
+      reader.onload = () => (this.photoPreview = reader.result as string);
       reader.readAsDataURL(file);
     }
   }
@@ -94,7 +96,7 @@ export class JusticeFormsComponent {
     if (file) {
       this.selectedCartePhoto = file;
       const reader = new FileReader();
-      reader.onload = () => this.cartePhotoPreview = reader.result as string;
+      reader.onload = () => (this.cartePhotoPreview = reader.result as string);
       reader.readAsDataURL(file);
     }
   }
@@ -132,24 +134,31 @@ export class JusticeFormsComponent {
         cartePhotoBase64 = await this.fileToBase64(this.selectedCartePhoto);
       }
 
-      const justiceData = {
-        ...formValue,
-        source: 'justice',
-        photo: photoBase64,
-        photoCarteIdentite: cartePhotoBase64
-      };
+      const { nomComplet, contact, email, numeroCarteIdentite, commentaire, ...reste } = formValue;
 
-      this.storage.create(justiceData);
+      await this.storage.create(
+        'justice',
+        reste, // genre, typeViolence, roleAffaire, affaireEnCause, procedures
+        {
+          nom: nomComplet,
+          telephone: contact,
+          email,
+          numeroCarteIdentite,
+          commentaire,
+          photo: photoBase64,
+          photoCarteIdentite: cartePhotoBase64,
+        },
+      );
 
       this.isLoading = false;
       this.successMessage = ' Formulaire enregistré avec succès !';
       this.resetForm();
 
-      setTimeout(() => this.successMessage = '', 5000);
+      setTimeout(() => (this.successMessage = ''), 5000);
     } catch (error) {
       this.isLoading = false;
-      this.errorMessage = 'Erreur lors de l\'enregistrement';
-      setTimeout(() => this.errorMessage = '', 5000);
+      this.errorMessage = "Erreur lors de l'enregistrement";
+      setTimeout(() => (this.errorMessage = ''), 5000);
     }
   }
 
@@ -161,7 +170,7 @@ export class JusticeFormsComponent {
     this.cartePhotoPreview = null;
 
     const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => (input as HTMLInputElement).value = '');
+    fileInputs.forEach((input) => ((input as HTMLInputElement).value = ''));
   }
 
   // Navigation
@@ -173,13 +182,22 @@ export class JusticeFormsComponent {
     return this.router.url === route;
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
+    await this.auth.logout();
     this.router.navigate(['/login']);
   }
 
   // Getters
-  get nomComplet() { return this.justiceForm.get('nomComplet'); }
-  get email() { return this.justiceForm.get('email'); }
-  get contact() { return this.justiceForm.get('contact'); }
-  get numeroCarteIdentite() { return this.justiceForm.get('numeroCarteIdentite'); }
+  get nomComplet() {
+    return this.justiceForm.get('nomComplet');
+  }
+  get email() {
+    return this.justiceForm.get('email');
+  }
+  get contact() {
+    return this.justiceForm.get('contact');
+  }
+  get numeroCarteIdentite() {
+    return this.justiceForm.get('numeroCarteIdentite');
+  }
 }

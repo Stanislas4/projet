@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-police-forms',
@@ -39,7 +40,8 @@ export class PoliceFormsComponent {
     constructor(
       private fb: FormBuilder,
       private storage: StorageService,
-      private router: Router
+      private router: Router,
+      private auth : AuthService
     ) {}
 
     ngOnInit(): void {
@@ -95,14 +97,27 @@ export class PoliceFormsComponent {
           photoBase64 = await this.fileToBase64(this.selectedFile);
         }
 
-        const policeData = {
-          ...formValue,
-          source: 'police',
-          dateDebutProcedure: new Date(formValue.dateDebutProcedure).toISOString(),
-          photoCarteIdentite: photoBase64
-        };
+        const {
+  nomComplet, domicile, contact, numeroCarteIdentite, auteur, commentaire,
+  dateDebutProcedure, ...reste
+} = formValue;
 
-        this.storage.create(policeData);
+await this.storage.create(
+  'police',
+  {
+    ...reste,
+    dateDebutProcedure: new Date(dateDebutProcedure).toISOString()
+  },
+  {
+    nom: nomComplet,
+    telephone: contact,
+    adresse: domicile,
+    numeroCarteIdentite,
+    auteur,
+    commentaire,
+    photoCarteIdentite: photoBase64
+  }
+);
         this.isLoading = false;
         this.successMessage = 'Formulaire enregistré avec succès !';
         this.resetForm();
@@ -131,9 +146,10 @@ export class PoliceFormsComponent {
       return this.router.url === route;
     }
 
-    logout(): void {
-      this.router.navigate(['/login']);
-    }
+      async logout(): Promise<void> {
+  await this.auth.logout();
+  this.router.navigate(['/login']);
+}
 
     // Getters
     get nomComplet() { return this.policeForm.get('nomComplet'); }

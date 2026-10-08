@@ -1,22 +1,16 @@
 import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { inject } from '@angular/core';
+import { AuthService } from '../Services/auth.service';
 
-export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+export const roleGuard: CanActivateFn = async (route: ActivatedRouteSnapshot) => {
+  const auth = inject(AuthService);
   const router = inject(Router);
-  const connected = localStorage.getItem('vbg_connected') === 'true';
-  const role = localStorage.getItem('vbg_role');
+  const role = await auth.getRole();
 
-  if (!connected ||!role) {
-    router.navigate(['/login']);
-    return false;
-  }
+  if (!role) return router.createUrlTree(['/login']);
 
-  // Si la route demande un role précis (ex: data: {role: 'POLICE'})
-  const roleDemande = route.data['role'];
-  if (!roleDemande) return true; // page d'accueil, on laisse passer tous les connectés
-  if (role === 'ADMIN') return true;
-  if (role === roleDemande) return true;
+  const demande = route.data['role'];
+  if (!demande || role === 'ADMIN' || role === demande) return true;
 
-  router.navigate(['/dashboard']);
-  return false;
+  return router.createUrlTree(['/dashboard']);
 };

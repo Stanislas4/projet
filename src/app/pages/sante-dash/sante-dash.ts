@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { Sante } from '../../models/Interface';
 
 @Component({

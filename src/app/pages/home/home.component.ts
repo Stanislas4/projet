@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { Router } from '@angular/router';
 import { from } from 'rxjs';
 import { CommonModule, DatePipe } from '@angular/common';

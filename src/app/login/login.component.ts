@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { supabase } from '../supabase.client';
+import { AuthService } from '../Services/auth.service';
+import { StorageService } from '../Services/storage';
 
 @Component({
   selector: 'app-login',
@@ -11,31 +12,43 @@ import { supabase } from '../supabase.client';
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  code = '';
+  email = '';
+  password = '';
   message = '';
   loading = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    private storage: StorageService
+  ) {}
 
   async seConnecter() {
-    if(!this.code) { this.message = "Entre un code"; return; }
+    if (!this.email || !this.password) {
+      this.message = 'Remplis les deux champs';
+      return;
+    }
     this.loading = true;
     this.message = '';
 
-    const { data, error } = await supabase
-      .from('codes_acces')
-      .select('role')
-      .eq('code_secret', this.code.trim().toUpperCase())
-      .single();
+    const error = await this.auth.login(this.email.trim(), this.password);
+    if (error) {
+      this.loading = false;
+      this.message = 'Identifiants invalides';
+      return;
+    }
 
+    const role = await this.auth.getRole();
+    if (!role) {
+      this.loading = false;
+      this.message = "Compte sans rôle, contacte l'administrateur";
+      return;
+    }
+
+    // Recharge les dossiers maintenant que l'utilisateur est connecté
+    await this.storage.charger();
     this.loading = false;
 
-    if (data?.role) {
-      localStorage.setItem('role', data.role);
-      localStorage.setItem('isLogged', 'true'); // pour ton guard
-      this.router.navigate([`/${data.role.toLowerCase()}`]);
-    } else {
-      this.message = "Code invalide";
-    }
+    this.router.navigate([role === 'ADMIN' ? '/dashboard' : `/${role.toLowerCase()}form`]);
   }
 }

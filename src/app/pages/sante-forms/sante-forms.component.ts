@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { StorageService } from '../../Service/storage';
+import { StorageService } from '../../Services/storage';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '@/app/Services/auth.service';
 
 @Component({
   selector: 'app-sante-forms',
@@ -63,10 +64,11 @@ export class SanteFormsComponent {
   ];
 
   constructor(
-    private fb: FormBuilder,
-    private storage: StorageService,
-    private router: Router
-  ) { }
+  private fb: FormBuilder,
+  private storage: StorageService,
+  private router: Router,
+  private auth: AuthService
+) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -109,45 +111,52 @@ export class SanteFormsComponent {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.santeForm.invalid) {
-      this.santeForm.markAllAsTouched();
-      this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    try {
-      const formValue = this.santeForm.value;
-
-      let pieceJointeBase64 = null;
-      if (this.selectedFile) {
-        pieceJointeBase64 = await this.fileToBase64(this.selectedFile);
-      }
-
-      const santeData = {
-        ...formValue,
-        source: 'sante',
-        dateAgression: new Date(formValue.dateAgression).toISOString(),
-        pieceJointe: pieceJointeBase64
-      };
-
-      this.storage.create(santeData);
-
-      this.isLoading = false;
-      this.successMessage = 'Formulaire enregistré avec succès !';
-      this.resetForm();
-
-      setTimeout(() => this.successMessage = '', 5000);
-    } catch (error) {
-      this.isLoading = false;
-      this.errorMessage = 'Erreur lors de l\'enregistrement';
-      setTimeout(() => this.errorMessage = '', 5000);
-    }
+  if (this.santeForm.invalid) {
+    this.santeForm.markAllAsTouched();
+    this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
+    return;
   }
 
+  this.isLoading = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  try {
+    const formValue = this.santeForm.value;
+
+    let pieceJointeBase64 = null;
+    if (this.selectedFile) {
+      pieceJointeBase64 = await this.fileToBase64(this.selectedFile);
+    }
+
+    const { nomComplet, contact, commentaire, dateAgression, ...reste } = formValue;
+
+    await this.storage.create(
+      'sante',
+      {
+        ...reste, // age, sexe, typeViolence, cessionnaire, lesionConstates, etc.
+        dateAgression: new Date(dateAgression).toISOString()
+      },
+      {
+        nom: nomComplet,
+        telephone: contact,
+        commentaire,
+        pieceJointe: pieceJointeBase64
+      }
+    );
+
+    this.isLoading = false;
+    this.successMessage = 'Formulaire enregistré avec succès !';
+    this.resetForm();
+
+    setTimeout(() => this.successMessage = '', 5000);
+  } catch (error) {
+    console.error(error);
+    this.isLoading = false;
+    this.errorMessage = 'Erreur lors de l\'enregistrement';
+    setTimeout(() => this.errorMessage = '', 5000);
+  }
+}
   resetForm(): void {
     this.santeForm.reset();
     this.selectedFile = null;
@@ -164,9 +173,10 @@ export class SanteFormsComponent {
     return this.router.url === route;
   }
 
-  logout(): void {
-    this.router.navigate(['/login']);
-  }
+  async logout(): Promise<void> {
+  await this.auth.logout();
+  this.router.navigate(['/login']);
+}
 
   // Getters
   get nomComplet() { return this.santeForm.get('nomComplet'); }
